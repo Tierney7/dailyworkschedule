@@ -1,130 +1,84 @@
-let schedule = 
-[
-    {
-        Time: "9 am",
-        tag: 9,  
-        tasks: "" 
-    },
+var jumboDate = moment().format("dddd, MMMM D YYYY");
+var currentHour = (moment().format("HH"));
+$("#currentDay").text(jumboDate);
+console.log(moment().format("MM ddd, YYYY hh:mm:ss a"));
+console.log(moment().format("dddd, MMMM D YYYY"));
 
-    {
-        Time: "10 am",
-        tag: 10,
-        tasks: ""
-    },
+var newTable = $("<table>");
+newTable.addClass("plannerTB");
 
-    {
-        Time: "11 am",
-        tag: 11,
-        tasks: ""
-    },
+// var timeHr = 9:00:00;  //h:mm:ss a
+//Arrays to add data and classes to table
+var scheduleHr = ["9:00 AM", "10:00 AM", "11:00 AM", "12:00 PM", "1:00 PM", "2:00 PM", "3:00 PM", "4:00 PM", "5:00 PM"];
+var compareHr = ["09", "10", "11", "12", "13", "14", "15", "16", "17"];
+var localHr = ["0900", "1000", "1100", "1200", "100", "200", "300", "400", "500"];
 
-    {
-        Time: "12 pm",
-        tag: 12,
-        tasks: ""
-    },
 
-    {
-        Time: "1 pm",
-        tag: 13,
-        tasks: ""
-    },
+for (i = 0; i< scheduleHr.length; i++) {
+    var newRow = $("<tr>");
+    newRow.addClass("row");
 
-    {
-        Time: "2 pm",
-        tag: 14,
-        tasks: ""
-    },
-
-    {
-        Time: "3 pm",
-        tag: 15,
-        tasks: ""
-    },
-
-    {
-        Time: "4 pm",
-        tag: 16,
-        tasks: ""
-    },
-
-    {
-        Time: "5 pm",
-        tag: 17,
-        tasks: ""
-    }
-];
-
-$(document).ready(function()
-{
-   
-    loadtasks();
-
+    var newHour = $("<td>");
+    newHour.addClass("hour");
+    newHour.html(scheduleHr[i]);
     
-    $("#currentDay").text(moment().format('MMMM Do YYYY, h:mm:ss a'));
+    var newMeetingTD = $("<td>");
+    newMeetingTD.addClass("column");
+    newMeetingTD.addClass(compareHr[i]);
+    newMeetingTD.attr("data-name", compareHr[i]);
+    newMeetingTD.html("");
+    var newMeetingArea = $("<textarea>");
+    newMeetingArea.addClass("textarea " + localHr[i]);
+    
+    var buttonTd = $("<td>");
+    buttonTd.addClass("buttonBox")
+    var newBtn = $("<button>");
+    newBtn.addClass("saveBtn");
+    newBtn.attr("data-name", localHr[i]);
+    newBtn.addClass("saveBtn");
+    newBtn.html('<i class="fas fa-lock"></i>');
 
-    var scheduleContainer = $("#scheduleContainer"); 
-    var getCurrentHour = (moment().format('H'));  
+    $(".container").append(newTable);
+    newTable.append(newRow);
+    newRow.append(newHour, newMeetingTD, buttonTd); //Add all the tds
+    newMeetingTD.append(newMeetingArea); //add the textarea to td
+    buttonTd.append(newBtn); //add the button to td
+}
 
-    $.each(schedule, function(i, time)  
-    {
-        scheduleContainer.append("<div id=\"time" + i + "\"" + "class=\"row\"></div>"); 
-        $("#time"+i).append("<div id=\"currentTime" + i + "\"" + "class=\"col-2 hour\">" + time.Time + "</div>");
-        let scheduleHour = time.tag; 
-        
-            if (getCurrentHour > scheduleHour) 
-            {
-                stateClass ="past";
-            }
-            else if (getCurrentHour == scheduleHour)  
-            {
-                stateClass ="present";
-            }
-            else if (getCurrentHour < scheduleHour)  
-            {
-                stateClass ="future";
-            } 
-        $("#time"+i).append("<textarea id=\"textArea" + i + "\"" + "class=\"col-8 " + stateClass + "\"textarea\">" + schedule[i].tasks + "</textarea>"); 
-        $("#time"+i).append("<div id=\"saveBtn" + i + "\"" + "data-index=\"" + i + "\"" + "class=\"col-2 saveBtn\">" + "save" + "</div>");  
-    });
+$('.saveBtn').on("click", function(){
+    event.preventDefault();
+    console.log(this);
+    var getId = $(this).data("name"); //Get the data-name to use as the local storage key ex 0900
+    console.log(getId);
+    var meeting = $("." + getId).val();
+    console.log("meeting", meeting);
+    localStorage.setItem(getId, meeting);
+    renderMeetings();
+})
 
- 
-    $(".saveBtn").click(function(event) 
-    {
-        var element = event.target; 
-        var index = parseInt($(element).attr("data-index"),10); 
-        saveTask(index); 
-    });
+function renderMeetings() {
+    $("textarea").empty();
+    console.log("Render Meetings");
+    for (i=0; i < scheduleHr.length; i++){
+        var returnMeeting = localStorage.getItem(localHr[i]);
+        console.log(returnMeeting);
+        $("." + localHr[i] + "").html(returnMeeting);
+    }
+
+}
+renderMeetings();
+
+$(".column").each(function(){
+    var dataName = $(this).attr("data-name");
+    var currentTD = "." + dataName;
+    if (dataName == currentHour){
+        console.log(dataName, currentHour, "red", "future");
+        $(currentTD).addClass("present");
+    } else if(dataName < currentHour){
+        console.log(dataName, currentHour, "grey", "past");
+        $(currentTD).addClass("past");
+    } else if (dataName > currentHour){
+        console.log(dataName, currentHour, "green", "future");
+        $(currentTD).addClass("future");
+    }
 });
-
-  
-function loadtasks() {
-    var data = localStorage.getItem("schedule"); 
-    if (data) 
-    {
-      var scheduleArray = JSON.parse(data); 
-      $.each(scheduleArray, function(i, item) 
-      {
-        schedule[i].tasks = item.tasks; 
-      });
-    }
-    else {
-      localStorage.setItem("schedule", JSON.stringify(schedule));  
-    }
-  }
-
-  
-function saveTask(index)
-{
-    var textArea = $("#textArea" + index);  
-    if (textArea.val() !== "") 
-    {
-        schedule[index].tasks = textArea.val();  
-
-        localStorage.setItem("schedule", JSON.stringify(schedule)); 
-    }
-    else
-    {
-        alert("no tasks to save") 
-    }
-};
