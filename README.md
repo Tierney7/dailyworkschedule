@@ -8,10 +8,13 @@ My goals for this project were to create a daily planner. Create a header using 
 
 ## Usage
 
-![alt text](assets
+![alt text](assets/images/Screenshot%20(66).png)
+
+![alt text](assets/images/Screenshot%20(67).png)
 
 ## Credits
 W3schools.com
+KU bootcamp tutor 
 youtube.com "web dev tools"
 My KU bootcamp classmates. Mainly Christian Fellwock.
 
