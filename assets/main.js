@@ -7,8 +7,6 @@ console.log(moment().format("dddd, MMMM D YYYY"));
 var newTable = $("<table>");
 newTable.addClass("plannerTB");
 
-// var timeHr = 9:00:00;  //h:mm:ss a
-//Arrays to add data and classes to table
 var scheduleHr = ["9:00 AM", "10:00 AM", "11:00 AM", "12:00 PM", "1:00 PM", "2:00 PM", "3:00 PM", "4:00 PM", "5:00 PM"];
 var compareHr = ["09", "10", "11", "12", "13", "14", "15", "16", "17"];
 var localHr = ["0900", "1000", "1100", "1200", "100", "200", "300", "400", "500"];
@@ -40,15 +38,15 @@ for (i = 0; i< scheduleHr.length; i++) {
 
     $(".container").append(newTable);
     newTable.append(newRow);
-    newRow.append(newHour, newMeetingTD, buttonTd); //Add all the tds
-    newMeetingTD.append(newMeetingArea); //add the textarea to td
-    buttonTd.append(newBtn); //add the button to td
+    newRow.append(newHour, newMeetingTD, buttonTd);
+    newMeetingTD.append(newMeetingArea); 
+    buttonTd.append(newBtn); 
 }
 
 $('.saveBtn').on("click", function(){
     event.preventDefault();
     console.log(this);
-    var getId = $(this).data("name"); //Get the data-name to use as the local storage key ex 0900
+    var getId = $(this).data("name"); 
     console.log(getId);
     var meeting = $("." + getId).val();
     console.log("meeting", meeting);
